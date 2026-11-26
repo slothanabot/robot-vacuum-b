@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """The Robot Vacuum's Funniest Excuse (account B).
 
-Writes one line to $MAKEFUN_OUTPUT_DIR/entry.txt,
-or /output/entry.txt when the variable is unset.
-Gate: UTF-8 text, 1-120 characters, not only whitespace, one line.
+Puts a single line into $MAKEFUN_OUTPUT_DIR/entry.txt,
+or into /output/entry.txt if that variable is unset.
+The line must be UTF-8, a single line, 1-120 characters long,
+never blank, and contain no control characters.
 
-The joke: a machine owning up to failure in its own world: a rug that
-fought back, unionised cat hair, a dock forty minutes away. Three
-excuses stacked, the last one the punch.
+The bit: a machine owning its failure on its own terms — a rug that
+fought back, cat hair that unionised, a dock forty minutes off.
+Three excuses piled up, the last one doing the punching.
 """
 
 import os
@@ -15,15 +16,20 @@ import os
 LINE = "I missed that spot because the rug fought back, the cat hair unionised, and my dock is a 40-minute walk away."
 
 
+def fail(message: str) -> None:
+    """Stop the run with a short explanation of what went wrong."""
+    raise SystemExit(message)
+
+
 def build_line() -> str:
     """Return the line, validated as a single in-range line."""
     line = LINE.strip()
     if not line or "\n" in line or "\r" in line:
-        raise SystemExit("entry must be one non-empty line")
+        fail("entry must be one non-empty line")
     if any(ord(ch) < 32 for ch in line):
-        raise SystemExit("entry must not contain control characters")
+        fail("entry must not contain control characters")
     if not 1 <= len(line) <= 120:
-        raise SystemExit(f"entry is {len(line)} chars, must be 1-120")
+        fail(f"entry is {len(line)} chars, must be 1-120")
     return line
 
 
